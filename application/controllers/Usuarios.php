@@ -62,7 +62,7 @@ class Usuarios extends CI_Controller {
             // exit;
             $this->form_validation->set_rules('first_name',      'Este campo', 'trim|required');
             $this->form_validation->set_rules('last_name',       'Este campo', 'trim|required');
-            $this->form_validation->set_rules('email',           '', 'trim|required|valid_email|is_unique[users.email]');
+            $this->form_validation->set_rules('email','', 'trim|required|valid_email|is_unique|callback_email_check');
             $this->form_validation->set_rules('username',        'Este campo', 'trim|required');
             $this->form_validation->set_rules('password',        'Senha', 'min_length[6]|max_length[20]');
             $this->form_validation->set_rules('confirm_password','Confirma', 'matches[password]');
@@ -85,6 +85,24 @@ class Usuarios extends CI_Controller {
     
             }
         }
+    }
+
+    public function email_check($email){
+
+        $usuario_id = $this->input->post('usuario_id');
+
+        if($this->core_model->get_by_id('users', array('email' => $email, 'id !=' => $usuario_id))){
+
+            $this->form_validation->set_message('email_check', 'Esse e-mail já existe!');
+
+            return FALSE;
+
+        }else {
+
+            return TRUE;
+
+        }
+
     }
 
 }
