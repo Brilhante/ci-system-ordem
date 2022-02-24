@@ -1,14 +1,10 @@
 <?php
 
-defined('BASHPATH') or exit('Ação não permitida');
+// defined('BASHPATH') or exit('Ação não permitida (Model)');
 
 class Core_model extends CI_Model
 {
 
-        public function __construct()
-        {
-                $this->load->database();
-        }
 
         public function get_all($tabela = NULL, $condicao = NULL)
         {
