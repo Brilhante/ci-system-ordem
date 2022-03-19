@@ -41,7 +41,7 @@ class Usuarios extends CI_Controller {
     {
         if(!$user_id || !$this->ion_auth->user($user_id)->row()){
 
-            $this->session->set_flashdata('error','Usuário não encontrado');
+            $this->session->set_flashdata('error','Usuário não encontrado!');
             redirect('usuarios');
         }else {
             /*
@@ -63,7 +63,7 @@ class Usuarios extends CI_Controller {
             $this->form_validation->set_rules('first_name', 'Este campo', 'trim|required');
             $this->form_validation->set_rules('last_name', 'Este campo', 'trim|required');
             $this->form_validation->set_rules('email','', 'trim|required|valid_email|callback_email_check');
-            $this->form_validation->set_rules('username', 'Este campo', 'trim|required|callback_user_check');
+            $this->form_validation->set_rules('username', 'Este campo', 'trim|required|callback_username_check');
             $this->form_validation->set_rules('password', 'Senha', 'min_length[6]|max_length[20]');
             $this->form_validation->set_rules('confirm_password', 'Confirma','matches[password]');
 
@@ -92,6 +92,7 @@ class Usuarios extends CI_Controller {
 
                 //Verificar se foi passado o password
                 $password = $this->input->post('password');
+
                     if(!$password){
                         unset($data['password']);
                     }
@@ -103,15 +104,16 @@ class Usuarios extends CI_Controller {
                     $perfil_usuario_post = $this->input->post('perfil_usuario');
 
                     //Se for diferente atualiza o grupo
-                    if($perfil_usuario_post != $perfil_usuario_db->id){
+                    if($perfil_usuario_db->id != $perfil_usuario_post  ){
 
                         $this->ion_auth->remove_from_group($perfil_usuario_db->id, $user_id);
-                        $this->ion_auth->add_from_group($perfil_usuario_post, $user_id);
+                        $this->ion_auth->add_to_group($perfil_usuario_post, $user_id);
                     }
                         $this->session->set_flashdata('sucesso', 'Dados salvos com sucesso!');
 
                     } else {
-                        $this->session->set_flashdata('error', 'Erro ao salvar os dados');
+
+                        $this->session->set_flashdata('error', 'Erro ao salvar os dados!');
                     }
                     redirect('usuarios');
 
@@ -135,7 +137,7 @@ class Usuarios extends CI_Controller {
     public function email_check($email){
 
         $usuario_id = $this->input->post('usuario_id');
-
+//Verificando o Email que está sendo passado existe no banco. O id que está sendo passado é diferente do usuário que está sendo editado no momento.
         if($this->core_model->get_by_id('users', array('email' => $email, 'id !=' => $usuario_id))){
 
             $this->form_validation->set_message('email_check', 'Esse e-mail já existe!');
@@ -149,7 +151,7 @@ class Usuarios extends CI_Controller {
         }
 
     }
-    public function user_check($username){
+    public function username_check($username){
 
         $usuario_id = $this->input->post('usuario_id');
 
